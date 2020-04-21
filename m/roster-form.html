@@ -57,6 +57,7 @@
     			<div class="row">
     				<div class=col>
     					<button id=submit__ID type="submit" class="btn btn-secondary">Submit</button>
+    					<button id=add__ID type="button" class="btn btn-secondary">Add</button>
     					<button id=delete__ID type="button" class="btn btn-secondary">Delete</button>
     				</div>
     			</div>
@@ -92,6 +93,8 @@
             old_load=m.load;
 			m.load=function(){
 				old_load();
+				$('#add__ID').hide();
+				if(m.input!=undefined && m.input.record!=undefined && m.input.record._id!==undefined) {$('#add__ID').show();$('#submit__ID').html("Modify");}
 				if(m.input.day!=undefined){
 					$('#F__ID input[name=Date]').val(m.input.day);
 				}
@@ -136,6 +139,13 @@
 			//-------------------------------------
 			$('#staff_link1__ID').on('click',function(){
 				$vm.load_module('staff-data','',{});
+			})
+			//-------------------------------------
+			$('#add__ID').on('click',function(){
+				m.input.goback=1;
+				m.input.record.UID=undefined;
+				m.input.record._id=undefined;
+				$('#submit__ID').click();
 			})
 			//-------------------------------------
 			$('#staff_link2__ID').on('click',function(){
