@@ -95,6 +95,7 @@
 				old_load();
 				$('#add__ID').hide();
 				if(m.input!=undefined && m.input.record!=undefined && m.input.record._id!==undefined) {$('#add__ID').show();$('#submit__ID').html("Modify");}
+				else {$('#submit__ID').html("Submit");}
 				if(m.input.day!=undefined){
 					$('#F__ID input[name=Date]').val(m.input.day);
 				}
