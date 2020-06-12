@@ -10,33 +10,51 @@ $('#next__ID').on('click', function () { m.ref++; m.set_ref(); m.request_and_ren
 $('#refresh__ID').on('click', function () { m.request_and_render(); })
 //---------------------------------------------
 m.set_ref = function () {
+      var weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";      
       var d = $vm.first_day_of_current_week();
       m.first_day = $vm.date_add_days(d, 7 * m.ref);
       m.last_day = $vm.date_add_days(d, 7 * m.ref + 6);
-      var s = "From " + $vm.date_to_yyyymmdd(m.first_day) + " to " + $vm.date_to_yyyymmdd(m.last_day);
+      var s = "From " + $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.first_day)) + " to " + $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.last_day));
       $('#period__ID').text(s);
-
-      /*
-    var d=new Date();
-    var y=d.getFullYear()
-    var mm=d.getMonth()+m.ref;
-    var d0=new Date(y,mm,1,0,0,0,0);
-    var e=d0.getDay(); if(e===0) e=7;
-    e=e-1; //0,1,...6 --- Monday....Sunday
-    var x=$vm.date_add_days(d0,-e-1);	  m.first_day=$vm.date_to_yyyymmdd(x);
-    var y=$vm.date_add_days(d0,-e+41+1);  m.last_day= $vm.date_to_yyyymmdd(y);
-    */
+      var header=""
+      var colour='';
+      for(var i=0;i<8;i++){
+            var dates=$vm.date_add_days(d, 7 * m.ref+i);
+            if (dates.getDate() == new Date().getDate() && dates.getMonth() == new Date().getMonth()) colour="style='background-color:lightcoral'";
+            else colour=''
+            if(i!==7) header+="<div class='col_header__ID' "+colour+" id=week_header_select__ID"+i+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
+            else header+="<div class='col_header__ID' style='cursor:default' "+colour+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
+      }
+      $('#day_header__ID').html(header);
+      $('#week_header_select__ID0').on('click',function(){to_week_day(0);});
+      $('#week_header_select__ID1').on('click',function(){to_week_day(1);});
+      $('#week_header_select__ID2').on('click',function(){to_week_day(2);});
+      $('#week_header_select__ID3').on('click',function(){to_week_day(3);});
+      $('#week_header_select__ID4').on('click',function(){to_week_day(4);});
+      $('#week_header_select__ID5').on('click',function(){to_week_day(5);});
+      $('#week_header_select__ID6').on('click',function(){to_week_day(6);});
+      var to_week_day=function(wd){
+            var dates=$vm.date_add_days(m.first_day, wd);
+            $vm.load_module("calendar-day",'',{fromweek:$vm.date_to_yyyymmdd(dates)});
+      }
 }
 m.set_ref();
 //---------------------------------------------
 m.get_cell_div = function (d) {
       var R = undefined;
-      $('#calendar__ID u').each(function () {
-            var ddd = $(this).data('d');
+      $('#calendar__ID i').each(function () {
+            var ddd = $(this).parent().data('d');
             if (ddd !== undefined) {
                   var sd = $vm.date_to_yyyymmdd(ddd)
                   if (sd === d) {
-                        R = $(this).parent().next().next();
+                        R = $(this).parent().parent();
                         return false;
                   }
             }
@@ -53,28 +71,12 @@ m.calendar_render = function (html) {
             for (var j = 0; j < 8; j++) {
                   var idd = 'A' + id + '_' + i + '_' + j
                   var d = $vm.date_add_days(m.first_day, j)
-                  var N = d.getDate();
-                  var N = "<u id=" + idd + " style=cursor:pointer>" + N + "</u>";
-                  var weekday = "";
-                  if (j == 0) weekday = "<span class=weekday>Monday</span>";
-                  if (j == 1) weekday = "<span class=weekday>Tuesday</span>";
-                  if (j == 2) weekday = "<span class=weekday>Wednesday</span>";
-                  if (j == 3) weekday = "<span class=weekday>Thursday</span>";
-                  if (j == 4) weekday = "<span class=weekday>Friday</span>";
-                  if (j == 5) weekday = "<span class=weekday>Saturday</span>";
-                  if (j == 6) weekday = "<span class=weekday>Sunday</span>";
-                  if (j == 7) {
-                        weekday = "<span class=weekday>Monday</span>";
-                        row += "<div class=col__ID><div class=day__ID style='display:none'></div>" + weekday + "&nbsp;<div class=event_container__ID>" + html + "</div></div>";
-                  }
-                  else {
-                        if (d.getDate() == new Date().getDate() && d.getMonth() == new Date().getMonth()) row += "<div class=col__ID><div class=day__ID style='background-color:lightcoral'>" + N + "</div>" + weekday + "&nbsp;<div class=event_container__ID>" + html + "</div></div>";
-                        else row += "<div class=col__ID><div class=day__ID>" + N + "</div>" + weekday + "&nbsp;<div class=event_container__ID>" + html + "</div></div>";
-                  }
+                  if(j!=7) row += "<div class=col__ID><div class=event_container__ID><div style='color:black;padding:3px;'  ><div class='item__ID' id="+idd+" style='background-color:#fafafa;' > <i class='fas fa-plus'></i> </div></div></div></div>";
+                  else row += "<div class=col__ID><div class=event_container__ID><div style='color:black;padding:3px;'  ><div class='item__ID'  style='background-color:#fafafa;cursor:default' > &nbsp; </div></div></div></div>";
             }
             row += "</div>";
             $('#body__ID').append(row);
-            for (var j = 0; j < 7; j++) {
+            for (var j = 0; j < 8; j++) {
                   var d = $vm.date_add_days(m.first_day, j);
                   var idd = 'A' + id + '_' + i + '_' + j
                   $('#' + idd).data('d', d);

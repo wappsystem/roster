@@ -11,8 +11,14 @@
         m.total_width=(24*60-m.start_point);
         //--------------------------------------------------------
     	m.on_day_click_fun=function(date){
-			$vm.load_module(m.booking,'',{day:date,goback:1})
+			$vm.load_module('calendar-day','',{fromweek:date,goback:1})
     	}
+    	//--------------------------------------------------------
+    	m.on_day_click_fun_booking=function(date){
+			$vm.load_module(m.roster,'',{day:date,goback:1})
+    	}
+   	//--------------------------------------------------------
+        var first_record=false;
     	//--------------------------------------------------------
         m.request_and_render=function(){
             var mt1=new Date().getTime();
@@ -20,7 +26,7 @@
             var dt2=$vm.date_to_yyyymmdd($vm.date_add_days(m.last_day,1));
             $vm.request({cmd:"find",table:m.Table,query:{I1:{"$gt":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
                 if(res.permission==false){
-                    alert("No permission to get booking information.");
+                    alert("No permission to get roster information.");
                     return;
                 }
                 //-----------------------
@@ -35,6 +41,18 @@
     			for(var i=0;i<res.result.length;i++){
                     m.cell_render(res.result[i]);
     			}
+                $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
+                    if(res.permission==false){
+                        alert("No permission to get roster information.");
+                        return;
+                    }
+                    //-----------------------
+                    for(var i=0;i<res.result.length;i++){
+                        if(i==0) first_record=true;
+                        else first_record=false;
+                        m.cell_render_bookings(res.result[i]);
+                    }
+                });
             });
         }
         //--------------------------------------------------------
@@ -55,6 +73,23 @@
             var item="<div style='color:"+$vm.whire_or_black_color(color)+";margin-left:"+mm+";width:"+ww+";' class=item__ID  ><div id=item__ID"+id+" style='padding-left:3px; background-color:"+color+";border-radius:3px;box-shadow: 3px 3px 2px #888888;' >"+time+" "+name+"</div></div>"
             $div.append(item);
             $('#item__ID'+id).on('click',function(){
+                $vm.load_module(m.roster,'',{record:record});
+            });
+        }
+        //--------------------------------------------------------
+        m.cell_render_bookings=function(record){
+            var id=record._id;
+            var date=record.Data.Date;
+            var name=record.Data.Item_Number_Procedure; if(name===undefined || name=="") name="No study type";
+            var color=record.Data.Colour;  
+            var patient =record.Data.Patient ;          
+            var $div=m.get_cell_div(date);
+            var header="<div style='color:white;background-color:white' ><div style='padding-left:3px; background-color:white;border-radius:3px;' >&nbsp;</div></div>"
+            header+="<div style='color:white;background-color:grey' ><div style='padding-left:3px; background-color:grey;border-radius:3px;' >Sleepstudies</div></div>"
+            if(first_record)  $div.append(header);
+            var item="<div style='color:"+$vm.whire_or_black_color(color)+";' class=item__ID  ><div id=item_booking__ID"+id+" style='padding-left:3px; background-color:"+color+";border-radius:3px;' >"+name+"</div></div>"
+            $div.append(item);
+            $('#item_booking__ID'+id).on('click',function(){
                 $vm.load_module(m.booking,'',{record:record});
             });
         }
@@ -73,7 +108,7 @@
         #D__ID{
             background-color:#fff;
             font-size:13px;
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'Nunito Sans';
             height:100%;
             overflow: auto;
         }

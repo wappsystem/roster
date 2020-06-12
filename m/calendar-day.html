@@ -1,6 +1,6 @@
 <div id=D__ID>
     <div>
-        VmInclude:__COMPONENT__/d/day.01.html
+        VmInclude:__CURRENT_PATH__/day.01.html
     </div>
     <script>
     function F__ID(){
@@ -10,7 +10,7 @@
         //--------------------------------------------------------
         m.start_point=0*60;
         m.total_width=(36*60-m.start_point);
-        $('#new__ID').on('click',function(){ $vm.load_module(m.booking,'',{day:$('#date__ID').val(),goback:1}); })
+        $('#new__ID').on('click',function(){ $vm.load_module(m.roster,'',{day:$('#date__ID').val(),goback:1}); })
     	//--------------------------------------------------------
         m.request_and_render=function(){
             var txt="<tr>";
@@ -23,13 +23,15 @@
             txt+="</tr>";
             $('#thead__ID').html(txt);
             $("#tbody__ID").html("<tr><td id=cell__ID colspan=18 ></td></tr>");
+            $('#thead2__ID').html("<th colspan=18 style='text-align:left;padding:7px'>Sleepstudies</th>");
+            $("#tbody2__ID").html("<tr><td id=cell2__ID colspan=4 ></td><td id=cell3__ID colspan=4</td><td colspan=10></td></tr>");
             
             var mt1=new Date().getTime();
             var dt1=$('#date__ID').val();
             var dt2=$vm.date_to_yyyymmdd($vm.date_add_days($vm.date_today(),m.ref+1));
             $vm.request({cmd:"find",table:m.Table,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
                 if(res.permission==false){
-                    alert("No permission to get booking information.");
+                    alert("No permission to get roster information.");
                     return;
                 }
                 //-----------------------
@@ -41,6 +43,16 @@
                 //-----------------------
     			for(var i=0;i<res.result.length;i++){
     	            m.cell_render(res.result[i]);
+                }
+            });
+            $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
+                if(res.permission==false){
+                    alert("No permission to get roster information.");
+                    return;
+                }
+                //-----------------------
+    			for(var i=0;i<res.result.length;i++){
+    	            m.cell_render_bookings(res.result[i]);
                 }
             });
         }
@@ -71,11 +83,46 @@
             var item="<div style='color:"+$vm.whire_or_black_color(color)+";margin-left:"+mm+";width:"+ww+";' class=item__ID  ><div id=item__ID"+id+" style='padding-left:3px; background-color:"+color+";border-radius:3px;box-shadow: 3px 3px 2px #888888;' >"+time+"-"+endtime+" "+name+"</div></div>"
             $div.append(item);
             $('#item__ID'+id).on('click',function(){
+                $vm.load_module(m.roster,'',{record:record});
+            });
+        }
+        //--------------------------------------------------------
+        m.cell_render_bookings=function(record){
+            var id=record._id;
+            var name=record.Data.Item_Number_Procedure; if(name===undefined || name=="") name="No study type";
+            var color=record.Data.Colour;
+            var patient =record.Data.Patient ;
+
+            var $div=$("#cell2__ID");
+            var item="<div style='color:"+$vm.whire_or_black_color(color)+";' class=item__ID  ><div id=item_booking__ID"+id+" style='padding-left:3px; background-color:"+color+";border-radius:3px;box-shadow: 3px 3px 2px #888888;' > "+name+ "</div></div>"
+            $div.append(item);
+            var $div=$("#cell3__ID");
+            var item="<div style='color:"+$vm.whire_or_black_color(color)+";' class=item__ID  ><div id=item_booking_patient__ID"+id+" style='padding-left:3px; background-color:"+color+";border-radius:3px;box-shadow: 3px 3px 2px #888888;' > "+patient+"</div></div>"
+            $div.append(item);
+            $('#item_booking__ID'+id).on('click',function(){
+                $vm.load_module(m.booking,'',{record:record});
+            });
+            $('#item_booking_patient__ID'+id).on('click',function(){
                 $vm.load_module(m.booking,'',{record:record});
             });
         }
         //--------------------------------------------------------
+        var clear_page=function(){
+            $('#thead__ID').html('');
+            $('#tbody__ID').html('');
+            $('#thead2__ID').html('');
+            $('#tbody2__ID').html('');
+        }
+        //--------------------------------------------------------
         $('#D__ID').on('load',function(){
+            if(m.input.fromweek==undefined) m.input.fromweek=$vm.date_to_string_yyyymmdd(new Date())
+            $('#date__ID').val(m.input.fromweek);
+            var sel_date=$vm.date_yyyymmdd_parse(m.input.fromweek)
+            var now=d=new Date();
+            m.ref=parseInt((sel_date.getTime()-now.getTime())/86400000);
+            if(sel_date.getTime()>now.getTime()) m.ref++;
+            //console.log(sel_date+" "+now+" "+m.input.fromweek)
+            clear_page();
             m.request_and_render();
         });
         //--------------------------------------------------------
@@ -87,7 +134,7 @@
         #D__ID{
             background-color:#fff;
             font-size:13px;
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'Nunito Sans';
             height:100%;
             overflow: auto;
         }

@@ -13,16 +13,7 @@
         <span id=elapsed__ID style='float:right'></span>
     </div>
 <div id=calendar__ID>
-    <div class='header__ID'>
-        <div class='col_header__ID'>Monday</div>
-        <div class='col_header__ID'>Tuesday</div>
-        <div class='col_header__ID'>Wednesday</div>
-        <div class='col_header__ID'>Thursday</div>
-        <div class='col_header__ID'>Friday</div>
-        <div class='col_header__ID'>Saturday</div>
-        <div class='col_header__ID'>Sunday</div>
-        <div class='col_header__ID'>Monday</div>
-    </div>
+    <div class='header__ID' id=day_header__ID></div>
     <div id=body__ID></div>
 </div>
 <style>
@@ -30,11 +21,11 @@
 		background-color:#ccc;
 		padding-left:2px;
 		margin-bottom:0px;
-		overflow:hidden
+		overflow:hidden;
 	}
     #calendar__ID{
-        font-size:9pt;
-        font-family:Verdana;
+        font-family: 'Nunito Sans';
+        font-size: 13px;
         overflow: auto;
     }
     .time__ID{
@@ -44,7 +35,7 @@
     }
     #calendar__ID u{
         cursor:pointer;
-        text-decoration: none;
+        /*text-decoration: none;*/
     }
     .event__ID{
 	    cursor:pointer;
@@ -81,7 +72,8 @@
 	    display:table-cell;
 	    width:12.5%;
         border-right:1px solid #bbb;
-        padding:5px
+        padding:5px;
+        cursor: pointer;
     }
     .col__ID{
 	    display:table-cell;
