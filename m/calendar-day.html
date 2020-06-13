@@ -23,8 +23,6 @@
             txt+="</tr>";
             $('#thead__ID').html(txt);
             $("#tbody__ID").html("<tr><td id=cell__ID colspan=18 ></td></tr>");
-            $('#thead2__ID').html("<th colspan=18 style='text-align:left;padding:7px'>Sleepstudies</th>");
-            $("#tbody2__ID").html("<tr><td id=cell2__ID colspan=4 ></td><td id=cell3__ID colspan=4</td><td colspan=10></td></tr>");
             
             var mt1=new Date().getTime();
             var dt1=$('#date__ID').val();
@@ -45,16 +43,20 @@
     	            m.cell_render(res.result[i]);
                 }
             });
-            $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
-                if(res.permission==false){
-                    alert("No permission to get roster information.");
-                    return;
-                }
-                //-----------------------
-    			for(var i=0;i<res.result.length;i++){
-    	            m.cell_render_bookings(res.result[i]);
-                }
-            });
+            if(m.input.sleep=='yes' || m.sleep=="yes"){
+                $('#thead2__ID').html("<th colspan=18 style='text-align:left;padding:7px'>Sleepstudies</th>");
+                $("#tbody2__ID").html("<tr><td id=cell2__ID colspan=4 ></td><td id=cell3__ID colspan=4</td><td colspan=10></td></tr>");
+                $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
+                    if(res.permission==false){
+                        alert("No permission to get roster information.");
+                        return;
+                    }
+                    //-----------------------
+                    for(var i=0;i<res.result.length;i++){
+                        m.cell_render_bookings(res.result[i]);
+                    }
+                });
+            }
         }
         //--------------------------------------------------------
         m.cell_render=function(record){

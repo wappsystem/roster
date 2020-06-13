@@ -36,18 +36,20 @@
                     //console.log(res.result[i])
     	            m.cell_render(res.result[i]);
     			}
-                $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
-                    if(res.permission==false){
-                        alert("No permission to get roster information.");
-                        return;
-                    }
-                    //-----------------------
-                    for(var i=0;i<res.result.length;i++){
-                        if(i==0) first_record=true;
-                        else first_record=false;
-                        m.cell_render_bookings(res.result[i]);
-                    }
-                });
+                if(m.input.sleep=='yes' || m.sleep=="yes"){
+                    $vm.request({cmd:"find",table:m.Table2,query:{I1:{"$gte":dt1,"$lt":dt2}},sort:{I1:1,I2:1},options:{}},function(res){
+                        if(res.permission==false){
+                            alert("No permission to get roster information.");
+                            return;
+                        }
+                        //-----------------------
+                        for(var i=0;i<res.result.length;i++){
+                            if(i==0) first_record=true;
+                            else first_record=false;
+                            m.cell_render_bookings(res.result[i]);
+                        }
+                    });
+                }
             });
         }
         //--------------------------------------------------------
