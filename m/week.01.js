@@ -21,9 +21,10 @@ m.set_ref = function () {
       var d = $vm.first_day_of_current_week();
       m.first_day = $vm.date_add_days(d, 7 * m.ref);
       m.last_day = $vm.date_add_days(d, 7 * m.ref + 6);
-      var s = "From " + $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.first_day)) + " to " + $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.last_day));
-      $('#period__ID').text(s);
+      var s =  $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.first_day)) + " - " + $vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(m.last_day));
+      $('#period__ID').html(s+" <b>Weekly Roster</b>");
       var header=""
+      var header2=""
       var colour='';
       for(var i=0;i<8;i++){
             var dates=$vm.date_add_days(d, 7 * m.ref+i);
@@ -31,6 +32,8 @@ m.set_ref = function () {
             else colour=''
             if(i!==7) header+="<div class='col_header__ID' "+colour+" id=week_header_select__ID"+i+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
             else header+="<div class='col_header__ID' style='cursor:default' "+colour+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
+            if(i!==7) header2+="<div class='col_header__ID' "+colour+" id=week_header_select2__ID"+i+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
+            else header2+="<div class='col_header__ID' style='cursor:default' "+colour+" >"+weekday[dates.getDay()]+" "+$vm.yyyymmdd_to_ddmmyyyy($vm.date_to_yyyymmdd(dates))+"</div>";
       }
       $('#day_header__ID').html(header);
       $('#week_header_select__ID0').on('click',function(){to_week_day(0);});
@@ -40,9 +43,17 @@ m.set_ref = function () {
       $('#week_header_select__ID4').on('click',function(){to_week_day(4);});
       $('#week_header_select__ID5').on('click',function(){to_week_day(5);});
       $('#week_header_select__ID6').on('click',function(){to_week_day(6);});
+      if(m.input.sleep=='yes' || m.sleep=="yes")       $('#day_header2__ID').html(header2);
+      $('#week_header_select2__ID0').on('click',function(){to_week_day(0);});
+      $('#week_header_select2__ID1').on('click',function(){to_week_day(1);});
+      $('#week_header_select2__ID2').on('click',function(){to_week_day(2);});
+      $('#week_header_select2__ID3').on('click',function(){to_week_day(3);});
+      $('#week_header_select2__ID4').on('click',function(){to_week_day(4);});
+      $('#week_header_select2__ID5').on('click',function(){to_week_day(5);});
+      $('#week_header_select2__ID6').on('click',function(){to_week_day(6);});
       var to_week_day=function(wd){
             var dates=$vm.date_add_days(m.first_day, wd);
-            $vm.load_module("calendar-day",'',{fromweek:$vm.date_to_yyyymmdd(dates)});
+            $vm.load_module("calendar-day",'',{fromweek:$vm.date_to_yyyymmdd(dates),sleep:'yes'});
       }
 }
 m.set_ref();
@@ -50,6 +61,22 @@ m.set_ref();
 m.get_cell_div = function (d) {
       var R = undefined;
       $('#calendar__ID i').each(function () {
+            var ddd = $(this).parent().data('d');
+            if (ddd !== undefined) {
+                  var sd = $vm.date_to_yyyymmdd(ddd)
+                  if (sd === d) {
+                        R = $(this).parent().parent();
+                        return false;
+                  }
+            }
+      })
+      if (R !== undefined) return $(R);
+      return R;
+}
+//-----------------------------------
+m.get_cell_div2 = function (d) {
+      var R = undefined;
+      $('#calendar2__ID i').each(function () {
             var ddd = $(this).parent().data('d');
             if (ddd !== undefined) {
                   var sd = $vm.date_to_yyyymmdd(ddd)
@@ -85,9 +112,28 @@ m.calendar_render = function (html) {
                         m.on_day_click_fun(date);
                   })
             }
+      }      
+      $('#body2__ID').html('');
+      if(m.input.sleep=='yes' || m.sleep=="yes"){
+            id = new Date().getTime();
+            for (var i = 0; i < 1; i++) {
+                  row = "<div class=row__ID>";
+                  for (var j = 0; j < 8; j++) {
+                        var iddd = 'Ab' + id + '_' + i + '_' + j
+                        var d = $vm.date_add_days(m.first_day, j)
+                        row += "<div class=col__ID><div class=event_container__ID style='padding:0;' ><div style='color:black;padding:3px' ><div class='item__ID' id="+iddd+" style='background-color:#fafafa;display:none' > <i class='fas fa-plus'></i> </div></div></div></div>";            }
+                  row += "</div>";
+                  $('#body2__ID').append(row);
+                  for (var j = 0; j < 8; j++) {
+                        var d = $vm.date_add_days(m.first_day, j);
+                        var iddd = 'Ab' + id + '_' + i + '_' + j
+                        $('#' + iddd).data('d', d);
+                  }
+            }
       }
 }
 //-----------------------------------
 m.on_day_click_fun = function () { }
+m.on_day_click_fun2 = function () { }
 m.request_and_render = function () { };
 //---------------------------------------------

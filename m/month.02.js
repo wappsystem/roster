@@ -13,7 +13,7 @@ m.set_ref = function () {
       var d = $vm.first_day_of_current_month();
       d.setMonth(d.getMonth() + m.ref);
       var s = (d.getMonth() + 1) + '/' + d.getFullYear();
-      $('#month_year__ID').text(s);
+      $('#month_year__ID').html(s+' <b>Monthly Roster</b>');
 
       var d = new Date();
       var y = d.getFullYear()

@@ -3,16 +3,15 @@
 		<div class="container-fluid" style='max-width:960px'>
 			<div class="text-center panel__ID" style='color:#fff'>
 				<br>
-				<h2>Sleeplab Roster Application</h2>
+				<h2>Sleeplab Roster</h2>
 				<p>
-					<br><br>
+
 					<a id=get1_in__ID class='btn btn-warning mt-1' style='color:#000' >Daily Roster</a>
 					<a id=get2_in__ID class='btn btn-warning mt-1' style='color:#000' >Weekly Roster</a>
 					<a id=get3_in__ID class='btn btn-warning mt-1' style='color:#000' >Monthy Roster</a>
-					<br><br>
+					<br>
 					<a id=get4_in__ID class='btn btn-warning mt-1' style='color:#000' >Daily Roster incl. Sleepstudies</a>
 					<a id=get5_in__ID class='btn btn-warning mt-1' style='color:#000' >Weekly Roster incl. Sleepstudies</a>
-					<a id=get6_in__ID class='btn btn-warning mt-1' style='color:#000' >Monthly Roster incl. Sleepstudies</a>
 				</p>
 				<br>
 			</div>
@@ -47,9 +46,6 @@
 		})
 		$('#get5_in__ID').on('click',function(){
 			$vm.load_module('calendar-week','',{"sleep":"yes"})
-		})
-		$('#get6_in__ID').on('click',function(){
-			$vm.load_module('calendar-month','',{"sleep":"yes"})
 		})
 		$('#scroll_down__ID').on('click',function(e){
 			e.preventDefault();
