@@ -12,10 +12,6 @@
     	m.on_day_click_fun=function(date){
 			$vm.load_module(m.roster,'',{day:date,goback:1})
         }
-    	m.on_day_click_fun2=function(date){
-            alert(1)
-			$vm.load_module(m.booking,'',{day:date,goback:1})
-        }
         var first_record=false;
         //--------------------------------------------------------
         var request_count=0;
@@ -59,21 +55,21 @@
         }
         //-----------------------
         var render_page=function(){
-    	        m.calendar_render("");
-    			for(var i=0;i<roster_rec.result.length;i++){
-                    //console.log(res.result[i])
-    	            m.cell_render(roster_rec.result[i]);
+            m.calendar_render("");
+            for(var i=0;i<roster_rec.result.length;i++){
+                //console.log(res.result[i])
+                m.cell_render(roster_rec.result[i]);
+            }
+            if(m.input.sleep=='yes' || m.sleep=="yes"){
+ //               var new_date="";
+                //-----------------------
+                for(var i=0;i<booking_rec.result.length;i++){
+ //                   if(new_date!=booking_rec.result[i].I1) first_record=true;
+ //                   else first_record=false;
+ //                   new_date=booking_rec.result[i].I1;
+                    m.cell_render_bookings(booking_rec.result[i]);
                 }
-                if(m.input.sleep=='yes' || m.sleep=="yes"){
-                    var new_date="";
-                    //-----------------------
-                    for(var i=0;i<booking_rec.result.length;i++){
-                        if(new_date!=booking_rec.result[i].I1) first_record=true;
-                        else first_record=false;
-                        new_date=booking_rec.result[i].I1;
-                        m.cell_render_bookings(booking_rec.result[i]);
-                    }
-                }                
+            }                
         }
         //--------------------------------------------------------
         m.cell_render=function(record){
@@ -124,11 +120,71 @@
         $('#D__ID').on('load',function(){
             var a=$(window).height()-$('#body__ID').offset().top;
             //$('#body__ID').css("min-height",a)
+            $('#paste__ID').hide();
             m.request_and_render();
+
         });
         //--------------------------------------------------------
         $('#D__ID').on('show',function(){  if($vm.refresh==1){$vm.refresh=0; m.request_and_render();}    });
         //--------------------------------------------------------
+        $('#copy__ID').on('click',function(){
+            //console.log(JSON.stringify(roster_rec));
+            m.roster_copy={};
+            m.roster_copy=roster_rec;
+            m.roster_first_day=m.first_day;
+            $('#paste__ID').show();
+            $('#copy__ID').hide();
+            //$vm.load_module(m.copy_week,'',{record:roster_rec});
+        })
+        //--------------------------------------------------------
+        $('#paste__ID').on('click',function(){
+            //console.log(JSON.stringify(m.roster_copy));
+            //console.log(JSON.stringify(m.roster_copy.result));
+            var new_roster={};
+            var new_index={}
+            var paste_first_day=m.first_day
+            var copy_first_day=m.roster_first_day;
+            if(confirm("Are you sure to make a copy of weekly roster from "+$vm.date_to_yyyymmdd(m.roster_first_day)+" and paste it here "+$vm.date_to_yyyymmdd(m.first_day)+"?\n")){
+                var j=0;
+                request_count=0;
+                for (var i=0;i<m.roster_copy.result.length;i++){
+                    //console.log($vm.date_to_yyyymmdd($vm.date_add_days(m.roster_first_day,j))+" - "+i)
+                    for(var j=0;j<7;j++){
+                        if(m.roster_copy.result[i].I1== $vm.date_to_yyyymmdd($vm.date_add_days(m.roster_first_day,j))){
+                            //console.log(m.roster_copy.result[i].Data.Staff+" - "+m.roster_copy.result[i].I1+" - "+ $vm.date_to_yyyymmdd($vm.date_add_days(m.first_day,j)) );
+                            new_roster=m.roster_copy.result[i].Data;
+                            new_roster.Date=$vm.date_to_yyyymmdd($vm.date_add_days(m.first_day,j));
+                            new_index.I1=$vm.date_to_yyyymmdd($vm.date_add_days(m.first_day,j));
+                            new_index.I2=m.roster_copy.result[i].I2;
+                            new_index.I3=m.roster_copy.result[i].I3;
+                            //console.log(JSON.stringify(new_roster))
+                            //console.log(JSON.stringify(new_index))
+                            $vm.request({cmd:'insert',table:m.Table,data:new_roster,index:new_index},function(res){
+                                if(res.status=="np"){
+                                    $vm.alert("No permission to insert a new record in to the database.");
+                                }
+                                request_count++;
+                            });
+                        }
+                    }
+                }
+                check_copy(m.roster_copy.result.length);
+            }
+            $('#copy__ID').show()
+            $('#paste__ID').hide();
+        })
+        //--------------------------------------------------------
+        function check_copy(count){
+            if (request_count<count){
+                setTimeout(function(){
+                    //console.log(req_count)
+                    check_copy(count);
+                },500);
+            }
+            else{
+                m.request_and_render();            }
+            }
+        //-----------------------
     }
     </script>
     <style>
@@ -152,7 +208,5 @@
         .event_container__ID{
             padding-top:8px;
         }
-
-
     </style>
 </div>
