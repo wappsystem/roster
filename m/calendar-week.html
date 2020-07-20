@@ -159,16 +159,18 @@
                             new_index.I3=m.roster_copy.result[i].I3;
                             //console.log(JSON.stringify(new_roster))
                             //console.log(JSON.stringify(new_index))
+                            jQuery.ajaxSetup({async:false});
                             $vm.request({cmd:'insert',table:m.Table,data:new_roster,index:new_index},function(res){
                                 if(res.status=="np"){
                                     $vm.alert("No permission to insert a new record in to the database.");
                                 }
                                 request_count++;
                             });
+                            jQuery.ajaxSetup({async:true});
                         }
                     }
                 }
-                check_copy(m.roster_copy.result.length);
+                //check_copy(m.roster_copy.result.length);
             }
             $('#copy__ID').show()
             $('#paste__ID').hide();

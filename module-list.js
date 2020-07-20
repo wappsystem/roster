@@ -3,7 +3,7 @@
     var modules={
         "calendar-week":       {url:"$H/m/calendar-week.html", Table:"demo-wapp-roster", Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form"},
         "calendar-month":       {url:"$H/m/calendar-month.html",Table:"demo-wapp-roster", Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form"},
-        "calendar-day":       {url:"$H/m/calendar-day.html",Table:"demo-wapp-roster",Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form"},
+        "calendar-day":       {url:"$H/m/calendar-day.html",Table:"demo-wapp-roster",Table2:"demo-wapp-booking",Table3:"demo-wapp-assign","roster":"roster-form","booking":"booking-form"},
         "calendar-week-ss":       {url:"$H/m/calendar-week.html", Table:"demo-wapp-roster", Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form","sleep":"yes"},
         "calendar-month-ss":       {url:"$H/m/calendar-month.html",Table:"demo-wapp-roster", Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form","sleep":"yes"},
         "calendar-day-ss":       {url:"$H/m/calendar-day.html",Table:"demo-wapp-roster",Table2:"demo-wapp-booking","roster":"roster-form","booking":"booking-form","sleep":"yes"},
